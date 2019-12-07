@@ -4,7 +4,7 @@ import collections
 import unittest
 
 
-class TestDequeu(unittest.TestCase):
+class TestDeque(unittest.TestCase):
 
   """ test_iteratable_construct
   Black box testing the deque constructor of no paramters and an iteratable constructor
