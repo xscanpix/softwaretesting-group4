@@ -2,7 +2,16 @@
 
 import unittest
 from collections import Counter
-import itertools
+
+
+def _count_counter_elements(counter):
+    """ private method for counting elements """
+    _n = 0
+
+    for _ in counter.elements():
+        _n = _n + 1
+
+    return _n
 
 
 class TestCounterBlackbox(unittest.TestCase):
@@ -16,18 +25,49 @@ class TestCounterBlackbox(unittest.TestCase):
     The Counter class is similar to bags or multisets in other languages.
     Elements are counted from an iterable or initialized from another mapping (or counter).
     """
-    def test_counter_construct(self):
-        self.skipTest("Not implemented!")
+    def test_counter01_construct(self):
+        """
+        Test constructing a counter with different input argument types.
 
-    def _count_counter_elements(self, counter):
-        _n = 0
+        Purpose:
+            Check if constructing throws an TypeError on construction.
 
-        for _ in counter.elements():
-            _n = _n + 1
+            Check if construction of valid arguments are equal.
+        """
+        with self.assertRaises(TypeError):
+            Counter(1) # Integer is not iterable
 
-        return _n
+        with self.assertRaises(TypeError):
+            Counter(2.2) # Float is not iterable
 
-    def test_counter_lengths(self):
+        try:
+            Counter()  # Emtpy
+            Counter('')  # Empty iterable
+            Counter('123')  # Non-empty iterable
+            Counter({})  # Empty mapping
+            Counter({'1': 1, '2': 2})  # Non-empty mapping
+            Counter(a=1, b=2)  # keyword-args
+        except TypeError:
+            self.fail("Counter construction failed with supposedly valid input argument.")
+
+        # Test equality
+        c1 = Counter()
+        c2 = Counter('')
+        c3 = Counter({})
+
+        self.assertEqual(c1, c2)
+        self.assertEqual(c1, c3)
+        self.assertEqual(c2, c3)
+
+        c4 = Counter('aabc')
+        c5 = Counter({'a': 2, 'b': 1, 'c': 1})
+        c6 = Counter(a=2, b=1, c=1)
+
+        self.assertEqual(c4, c5)
+        self.assertEqual(c4, c6)
+        self.assertEqual(c5, c6)
+
+    def test_counter02_lengths(self):
         """
         Test len(Counter).
         """
@@ -103,7 +143,7 @@ class TestCounterBlackbox(unittest.TestCase):
         c = Counter(a=-1, b=0, c=2)
         self.assertEqual(len(c), 3)
 
-    def test_counter_f_elements(self):
+    def test_counter03_f_elements(self):
         """
         Test Counter.elements().
         Return an iterator chain over elements repeating each as many times as its count.
@@ -112,99 +152,108 @@ class TestCounterBlackbox(unittest.TestCase):
         """
         # Check empty Counter, no arguments
         c = Counter()
-        self.assertEqual(self._count_counter_elements(c), 0)
+        self.assertEqual(_count_counter_elements(c), 0)
 
         # Check empty Counter, empty 'set'
         c = Counter({})
-        self.assertEqual(self._count_counter_elements(c), 0)
+        self.assertEqual(_count_counter_elements(c), 0)
 
         # Check counter, empty 'list'
         c = Counter([])
-        self.assertEqual(self._count_counter_elements(c), 0)
+        self.assertEqual(_count_counter_elements(c), 0)
 
         # Check counter, empty 'iterable'
         c = Counter('')
-        self.assertEqual(self._count_counter_elements(c), 0)
+        self.assertEqual(_count_counter_elements(c), 0)
 
         # Check counter, filled 'set'
         c = Counter({'a', 'b', 'c'})
-        self.assertEqual(self._count_counter_elements(c), 3)
+        self.assertEqual(_count_counter_elements(c), 3)
 
         # Check counter, filled 'set' and duplicates ('set' cannot contain duplicates)
         c = Counter({'a', 'b', 'c', 'a'})
-        self.assertEqual(self._count_counter_elements(c), 3)
+        self.assertEqual(_count_counter_elements(c), 3)
 
         # Check counter, filled 'list'
         c = Counter(['a', 'b', 'c'])
-        self.assertEqual(self._count_counter_elements(c), 3)
+        self.assertEqual(_count_counter_elements(c), 3)
 
         # Check counter, filled 'list' and duplicates
         c = Counter(['a', 'b', 'c', 'a'])
-        self.assertEqual(self._count_counter_elements(c), 4)
+        self.assertEqual(_count_counter_elements(c), 4)
 
         # Check counter, filled 'iterable'
         c = Counter('abc')
-        self.assertEqual(self._count_counter_elements(c), 3)
+        self.assertEqual(_count_counter_elements(c), 3)
 
         # Check counter, filled 'iterable' and duplicates
         c = Counter('abca')
-        self.assertEqual(self._count_counter_elements(c), 4)
+        self.assertEqual(_count_counter_elements(c), 4)
 
         # Check counter with argument type 'dict' (zeros)  (zeroes are ignored)
         c = Counter({'a': 0, 'b': 0, 'c': 0})
-        self.assertEqual(self._count_counter_elements(c), 0)
+        self.assertEqual(_count_counter_elements(c), 0)
 
         # Check counter with argument type 'dict' (positive)
         c = Counter({'a': 2, 'b': 2, 'c': 2})
-        self.assertEqual(self._count_counter_elements(c), 6)
+        self.assertEqual(_count_counter_elements(c), 6)
 
         # Check counter with argument type 'dict' (negative) (negatives are ignored)
         c = Counter({'a': -1, 'b': -1, 'c': -1})
-        self.assertEqual(self._count_counter_elements(c), 0)
+        self.assertEqual(_count_counter_elements(c), 0)
 
         # Check counter with argument type 'dict' (mixed)
         c = Counter({'a': -1, 'b': 0, 'c': 2})
-        self.assertEqual(self._count_counter_elements(c), 2)
+        self.assertEqual(_count_counter_elements(c), 2)
 
         # Check counter with argument type 'dict', duplicates
         c = Counter({'a': 2, 'b': 2, 'c': 2, 'a': 1})
-        self.assertEqual(self._count_counter_elements(c), 5)
+        self.assertEqual(_count_counter_elements(c), 5)
 
         # Check counter with argument type 'keyword args'
         c = Counter(a=2, b=2, c=2)
-        self.assertEqual(self._count_counter_elements(c), 6)
+        self.assertEqual(_count_counter_elements(c), 6)
 
         # Check counter with argument type 'keyword args' (zeroes)
         c = Counter(a=0, b=0, c=0)
-        self.assertEqual(self._count_counter_elements(c), 0)
+        self.assertEqual(_count_counter_elements(c), 0)
 
         # Check counter with argument type 'keyword args' (negative)
         c = Counter(a=-1, b=-1, c=-1)
-        self.assertEqual(self._count_counter_elements(c), 0)
+        self.assertEqual(_count_counter_elements(c), 0)
 
         # Check counter with argument type 'keyword args' (mixed)
         c = Counter(a=-1, b=0, c=2)
-        self.assertEqual(self._count_counter_elements(c), 2)
+        self.assertEqual(_count_counter_elements(c), 2)
 
-    def test_counter_f_most_common(self):
+    def test_counter04_f_most_common(self):
         """
         Test Counter.most_common()
         Return a list of the n most common elements and their counts from the most common to the least.
         If n is omitted or None, most_common() returns all elements in the counter.
         Elements with equal counts are ordered arbitrarily.
         """
-        self.skipTest("Not implemented!")
 
-    def test_counter_f_subtract(self):
+        c = Counter("1223334444")
+        self.assertEqual(c.most_common(1), [('4', 4)])
+        self.assertEqual(c.most_common(5), [('4', 4), ('3', 3), ('2', 2), ('1', 1)])
+
+        self.assertEqual(c.most_common(4), c.most_common())
+
+        c1 = Counter("112223344")
+        self.assertEqual(c1.most_common(1), [('2', 3)])
+
+    def test_counter05_f_subtract(self):
         """
         Test Counter.subtract()
         Elements are subtracted from an iterable or from another mapping (or counter).
         Like dict.update() but subtracts counts instead of replacing them.
         Both inputs and outputs may be zero or negative.
         """
+
         self.skipTest("Not implemented!")
 
-    def test_counter_f_from_keys(self):
+    def test_counter06_f_from_keys(self):
         """
         Counter.from_keys() is not implemented for Counter.
         Should raise an NotImplementedError exception.
@@ -215,7 +264,7 @@ class TestCounterBlackbox(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             c.fromkeys(it)
 
-    def test_counter_f_update(self):
+    def test_counter07_f_update(self):
         """
         Test Counter.update()
         Elements are counted from an iterable or added-in from another mapping (or counter).
@@ -224,51 +273,51 @@ class TestCounterBlackbox(unittest.TestCase):
         """
         self.skipTest("Not implemented!")
 
-    def test_counter_count_missing(self):
+    def test_counter08_count_missing(self):
         """
         Counter objects have a dictionary interface except that they return a
         zero count for missing items instead of raising a KeyError:
         """
         self.skipTest("Not implemented!")
 
-    def test_counter_set_zero_and_delete(self):
+    def test_counter09_set_zero_and_delete(self):
         """
         Test setting an element to zero and deleting the element.
         Setting a count to zero does not remove an element from a counter. Use del to remove it entirely:
         """
-        pass
-
-    def test_counter_to_set(self):
         self.skipTest("Not implemented!")
 
-    def test_counter_to_list(self):
+    def test_counter10_to_set(self):
         self.skipTest("Not implemented!")
 
-    def test_counter_to_dict(self):
+    def test_counter11_to_list(self):
         self.skipTest("Not implemented!")
 
-    def test_counter_items(self):
+    def test_counter12_to_dict(self):
         self.skipTest("Not implemented!")
 
-    def test_counter_remove_zero_negative(self):
+    def test_counter13_items(self):
         self.skipTest("Not implemented!")
 
-    def test_counter_addition_other(self):
+    def test_counter14_remove_zero_negative(self):
+        self.skipTest("Not implemented!")
+
+    def test_counter15_addition_other(self):
         """
         Addition and subtraction combine counters by adding or subtracting the counts of corresponding elements.
         """
         self.skipTest("Not implemented!")
 
-    def test_counter_subtract_other(self):
+    def test_counter16_subtract_other(self):
         """
         Addition and subtraction combine counters by adding or subtracting the counts of corresponding elements.
         """
         self.skipTest("Not implemented!")
 
-    def test_counter_intersection_other(self):
+    def test_counter17_intersection_other(self):
         self.skipTest("Not implemented!")
 
-    def test_counter_union_other(self):
+    def test_counter18_union_other(self):
         self.skipTest("Not implemented!")
 
 
