@@ -29,10 +29,13 @@ class TestCounterBlackbox(unittest.TestCase):
         """
         Test constructing a counter with different input argument types.
 
+        Each valid construction boils down to a dict().
+        Test each different argument type here, later only dict() have to be tested.
+
         Purpose:
             Check if constructing throws an TypeError on construction.
 
-            Check if construction of valid arguments are equal.
+            Check if construction with valid arguments are equal.
         """
         with self.assertRaises(TypeError):
             Counter(1) # Integer is not iterable
@@ -42,15 +45,20 @@ class TestCounterBlackbox(unittest.TestCase):
 
         try:
             Counter()  # Emtpy
+            Counter(dict())  # Empty dict
             Counter('')  # Empty iterable
+            Counter({})  # Empty set
             Counter('123')  # Non-empty iterable
-            Counter({})  # Empty mapping
-            Counter({'1': 1, '2': 2})  # Non-empty mapping
+            Counter({'1': 1, '2': 2})  # Non-empty dict
             Counter(a=1, b=2)  # keyword-args
         except TypeError:
             self.fail("Counter construction failed with supposedly valid input argument.")
 
         # Test equality
+        c = Counter('')
+        c0 = Counter('1')
+        self.assertNotEqual(c, c0)
+
         c1 = Counter()
         c2 = Counter('')
         c3 = Counter({})
@@ -70,45 +78,17 @@ class TestCounterBlackbox(unittest.TestCase):
     def test_counter02_lengths(self):
         """
         Test len(Counter).
+
+        Purpose:
+            Check if Counters constructed with different arguments have the correct length.
+            Only dict() necessary to test.
         """
         # Check empty Counter, no arguments
         c = Counter()
         self.assertEqual(len(c),   0)
 
-        # Check empty Counter, empty 'set'
-        c = Counter({})
-        self.assertEqual(len(c), 0)
-
-        # Check counter, empty 'list'
-        c = Counter([])
-        self.assertEqual(len(c), 0)
-
-        # Check counter, empty 'iterable'
-        c = Counter('')
-        self.assertEqual(len(c), 0)
-
         # Check counter, filled 'set'
-        c = Counter({'a', 'b', 'c'})
-        self.assertEqual(len(c), 3)
-
-        # Check counter, filled 'set' and duplicates
-        c = Counter({'a', 'b', 'c', 'a'})
-        self.assertEqual(len(c), 3)
-
-        # Check counter, filled 'list'
-        c = Counter(['a', 'b', 'c'])
-        self.assertEqual(len(c), 3)
-
-        # Check counter, filled 'list' and duplicates
-        c = Counter(['a', 'b', 'c', 'a'])
-        self.assertEqual(len(c), 3)
-
-        # Check counter, filled 'iterable'
-        c = Counter('abc')
-        self.assertEqual(len(c), 3)
-
-        # Check counter, filled 'iterable' and duplicates
-        c = Counter('abc')
+        c = Counter({'a': 1, 'b': 1, 'c': 1})
         self.assertEqual(len(c), 3)
 
         # Check counter with argument type 'dict' (zeros)
@@ -127,20 +107,8 @@ class TestCounterBlackbox(unittest.TestCase):
         c = Counter({'a': 1, 'b': 1, 'c': 1, 'a': 1})
         self.assertEqual(len(c), 3)
 
-        # Check counter with argument type 'keyword args'
-        c = Counter(a=2, b=2, c=2)
-        self.assertEqual(len(c), 3)
-
-        # Check counter with argument type 'keyword args' (zeroes)
-        c = Counter(a=0, b=0, c=0)
-        self.assertEqual(len(c), 3)
-
-        # Check counter with argument type 'keyword args' (negative)
-        c = Counter(a=-1, b=-1, c=-1)
-        self.assertEqual(len(c), 3)
-
         # Check counter with argument type 'keyword args' (mixed)
-        c = Counter(a=-1, b=0, c=2)
+        c = Counter({'a': -1, 'b': 0, 'c': 2})
         self.assertEqual(len(c), 3)
 
     def test_counter03_f_elements(self):
