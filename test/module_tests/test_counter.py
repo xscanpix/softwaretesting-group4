@@ -122,41 +122,17 @@ class TestCounterBlackbox(unittest.TestCase):
         c = Counter()
         self.assertEqual(_count_counter_elements(c), 0)
 
-        # Check empty Counter, empty 'set'
-        c = Counter({})
+        # Check empty Counter, empty 'dict'
+        c = Counter(dict())
         self.assertEqual(_count_counter_elements(c), 0)
 
-        # Check counter, empty 'list'
-        c = Counter([])
-        self.assertEqual(_count_counter_elements(c), 0)
-
-        # Check counter, empty 'iterable'
-        c = Counter('')
-        self.assertEqual(_count_counter_elements(c), 0)
-
-        # Check counter, filled 'set'
-        c = Counter({'a', 'b', 'c'})
+        # Check counter, filled 'dict'
+        c = Counter({'a': 1, 'b': 1, 'c': 1})
         self.assertEqual(_count_counter_elements(c), 3)
 
-        # Check counter, filled 'set' and duplicates ('set' cannot contain duplicates)
-        c = Counter({'a', 'b', 'c', 'a'})
+        # Check counter, filled 'set' and duplicates ('dict' cannot contain duplicates)
+        c = Counter({'a': 1, 'b': 1, 'c': 1, 'a': 1})
         self.assertEqual(_count_counter_elements(c), 3)
-
-        # Check counter, filled 'list'
-        c = Counter(['a', 'b', 'c'])
-        self.assertEqual(_count_counter_elements(c), 3)
-
-        # Check counter, filled 'list' and duplicates
-        c = Counter(['a', 'b', 'c', 'a'])
-        self.assertEqual(_count_counter_elements(c), 4)
-
-        # Check counter, filled 'iterable'
-        c = Counter('abc')
-        self.assertEqual(_count_counter_elements(c), 3)
-
-        # Check counter, filled 'iterable' and duplicates
-        c = Counter('abca')
-        self.assertEqual(_count_counter_elements(c), 4)
 
         # Check counter with argument type 'dict' (zeros)  (zeroes are ignored)
         c = Counter({'a': 0, 'b': 0, 'c': 0})
@@ -174,42 +150,26 @@ class TestCounterBlackbox(unittest.TestCase):
         c = Counter({'a': -1, 'b': 0, 'c': 2})
         self.assertEqual(_count_counter_elements(c), 2)
 
-        # Check counter with argument type 'dict', duplicates
-        c = Counter({'a': 2, 'b': 2, 'c': 2, 'a': 1})
-        self.assertEqual(_count_counter_elements(c), 5)
-
-        # Check counter with argument type 'keyword args'
-        c = Counter(a=2, b=2, c=2)
-        self.assertEqual(_count_counter_elements(c), 6)
-
-        # Check counter with argument type 'keyword args' (zeroes)
-        c = Counter(a=0, b=0, c=0)
-        self.assertEqual(_count_counter_elements(c), 0)
-
-        # Check counter with argument type 'keyword args' (negative)
-        c = Counter(a=-1, b=-1, c=-1)
-        self.assertEqual(_count_counter_elements(c), 0)
-
-        # Check counter with argument type 'keyword args' (mixed)
-        c = Counter(a=-1, b=0, c=2)
-        self.assertEqual(_count_counter_elements(c), 2)
-
     def test_counter04_f_most_common(self):
         """
         Test Counter.most_common()
         Return a list of the n most common elements and their counts from the most common to the least.
         If n is omitted or None, most_common() returns all elements in the counter.
         Elements with equal counts are ordered arbitrarily.
+
+        Purpose:
+            Test whether the method returns the correct most common elements.
         """
+        sorted_least_most = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
+        sorted_most_least = Counter({'1': 4, '2': 3, '3': 2, '4': 1})
+        sorted_with_equals = Counter({'1': 4, '2': 3, '3': 3, '4': 2})
+        random = Counter({'1': 3, '2': 1, '3': 2, '4': 5})
 
-        c = Counter("1223334444")
-        self.assertEqual(c.most_common(1), [('4', 4)])
-        self.assertEqual(c.most_common(5), [('4', 4), ('3', 3), ('2', 2), ('1', 1)])
-
-        self.assertEqual(c.most_common(4), c.most_common())
-
-        c1 = Counter("112223344")
-        self.assertEqual(c1.most_common(1), [('2', 3)])
+        # Test select all
+        self.assertEqual(sorted_least_most.most_common(), [('4', 4), ('3', 3), ('2', 2), ('1', 1)])
+        self.assertEqual(sorted_most_least.most_common(), [('1', 4), ('2', 3), ('3', 2), ('4', 1)])
+        #self.assertIn(sorted_with_equals.most_common(), [[('1', 4), ('2', 3), ('3', 3), ('4', 1)], [('1', 4), ('3', 3), ('2', 3), ('4', 1)]])
+        self.assertEqual(random.most_common(), [('4', 5), ('1', 3), ('3', 2), ('2', 1)])
 
     def test_counter05_f_subtract(self):
         """
