@@ -1,0 +1,3 @@
+
+*.pyc
+test/module_tests/htmlcov
