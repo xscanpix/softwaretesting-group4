@@ -178,8 +178,15 @@ class TestCounterBlackbox(unittest.TestCase):
         Like dict.update() but subtracts counts instead of replacing them.
         Both inputs and outputs may be zero or negative.
         """
+        count_a = Counter({'1': 1, '2': 0, '3': 3, '4': 4})
+        count_b = Counter({'1': -2, '2': 2, '3': 3, '4': 4, '5': -5})
+        count_empty = Counter({})
 
-        self.skipTest("Not implemented!")
+        count_a.subtract(count_b)
+        self.assertEqual(count_a, ({'1': 3, '2': -2, '3': 0, '4': 0, '5': 5}))
+
+        count_a.subtract(count_empty)
+        self.assertEqual(count_a, ({'1': 3, '2': -2, '3': 0, '4': 0, '5': 5}))
 
     def test_counter06_f_from_keys(self):
         """
@@ -208,8 +215,13 @@ class TestCounterBlackbox(unittest.TestCase):
         # Counter object
         b_count = Counter(["test1", "test2", "test3"])
         c_count = Counter(["test1", "test2", "test3"])
+        d_count = ["test4"]
         b_count.update(c_count)
         self.assertEqual(b_count, {"test1":2, "test2":2, "test3":2})
+
+        # Including a new item
+        b_count.update(d_count)
+        self.assertEqual(b_count, {"test1":2, "test2":2, "test3":2, "test4":1})
 
 
     def test_counter08_count_missing(self):
@@ -234,16 +246,50 @@ class TestCounterBlackbox(unittest.TestCase):
 
 
     def test_counter10_to_set(self):
-        self.skipTest("Not implemented!")
+        """
+        Test converting a Counter object to a Set object.
+        """
+
+        c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
+        set_c = set(c)
+        self.assertFalse(isinstance(c, set))
+        self.assertTrue(isinstance(set_c, set))
 
     def test_counter11_to_list(self):
-        self.skipTest("Not implemented!")
+        """
+        Test converting a Counter object to a List object.
+        """
+        c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
+        list_c = list(c)
+
+        self.assertFalse(isinstance(c, list))
+        self.assertTrue(isinstance(list_c, list))
 
     def test_counter12_to_dict(self):
-        self.skipTest("Not implemented!")
+        """
+        Test converting a Counter object to a Dict.
+        """
+        c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
+        dict_c = dict(c)
+
+        # Both dict and Counter due to inheritance
+        self.assertTrue(isinstance(c, Counter))
+        self.assertTrue(isinstance(c, dict))
+
+        # Not a Counter object anymore, only dict
+        self.assertFalse(isinstance(dict_c, Counter))
+        self.assertTrue(isinstance(dict_c, dict))
+
 
     def test_counter13_items(self):
+        """
+        Test converting a Counter object to a list of (elem, cnt) pairs.
+        """
+        c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
+
         self.skipTest("Not implemented!")
+
+
 
     def test_counter14_remove_zero_negative(self):
         """
@@ -254,11 +300,10 @@ class TestCounterBlackbox(unittest.TestCase):
         count_empty = Counter({})
 
         count_a += count_b
-
         self.assertEqual(count_a, ({'1': 1, '3': 6, '4': 8, '5': 5}))
 
+        # Adds count_b with a empty counter
         count_b += count_empty
-
         self.assertEqual(count_b, ({'1': 1, '3': 3, '4': 4, '5': 5}))
 
     def test_counter15_addition_other(self):
