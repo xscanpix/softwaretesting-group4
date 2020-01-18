@@ -199,21 +199,39 @@ class TestCounterBlackbox(unittest.TestCase):
         Like dict.update() but adds counts instead of replacing them.
         Also, the iterable is expected to be a sequence of elements, not a sequence of (key, value) pairs.
         """
-        self.skipTest("Not implemented!")
+        # Iterable object
+        a_count = Counter(["test1", "test2", "test3"])
+        it = iter(("test1", "test2", "test3"))
+        a_count.update(it)
+        self.assertEqual(a_count, {"test1":2, "test2":2, "test3":2})
+
+        # Counter object
+        b_count = Counter(["test1", "test2", "test3"])
+        c_count = Counter(["test1", "test2", "test3"])
+        b_count.update(c_count)
+        self.assertEqual(b_count, {"test1":2, "test2":2, "test3":2})
+
 
     def test_counter08_count_missing(self):
         """
         Counter objects have a dictionary interface except that they return a
         zero count for missing items instead of raising a KeyError:
         """
-        self.skipTest("Not implemented!")
+        c = Counter({'1': 0, '2': 2, '3': 3, '4': 4})
+        self.assertEqual(c['5'], 0)
 
     def test_counter09_set_zero_and_delete(self):
         """
         Test setting an element to zero and deleting the element.
         Setting a count to zero does not remove an element from a counter. Use del to remove it entirely:
         """
-        self.skipTest("Not implemented!")
+        c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
+        c['1'] = 0
+        self.assertEqual(c, {'1': 0, '2': 2, '3': 3, '4': 4})
+
+        del c['1']
+        self.assertEqual(c, {'2': 2, '3': 3, '4': 4})
+
 
     def test_counter10_to_set(self):
         self.skipTest("Not implemented!")
@@ -228,26 +246,68 @@ class TestCounterBlackbox(unittest.TestCase):
         self.skipTest("Not implemented!")
 
     def test_counter14_remove_zero_negative(self):
-        self.skipTest("Not implemented!")
+        """
+        Removes keys that have zero or negative values after adding them.
+        """
+        count_a = Counter({'1': 0, '2': 2, '3': 3, '4': 4})
+        count_b = Counter({'1': 1, '2': -4, '3': 3, '4': 4, '5': 5})
+        count_empty = Counter({})
+
+        count_a += count_b
+
+        self.assertEqual(count_a, ({'1': 1, '3': 6, '4': 8, '5': 5}))
+
+        count_b += count_empty
+
+        self.assertEqual(count_b, ({'1': 1, '3': 3, '4': 4, '5': 5}))
 
     def test_counter15_addition_other(self):
         """
         Addition and subtraction combine counters by adding or subtracting the counts of corresponding elements.
         """
-        self.skipTest("Not implemented!")
+        count_a = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
+        count_b = Counter({'1': 1, '2': 2, '3': 3, '4': 4, '5': 5})
+        count_empty = Counter({})
+        count_add_a = count_a + count_b
+        count_add_b = count_a + count_empty
+
+        self.assertEqual(count_add_a, ({'1': 2, '2': 4, '3': 6, '4': 8, '5': 5}))
+        self.assertEqual(count_add_b, count_a)
 
     def test_counter16_subtract_other(self):
         """
         Addition and subtraction combine counters by adding or subtracting the counts of corresponding elements.
         """
-        self.skipTest("Not implemented!")
+        count_a = Counter({'1': 2, '2': 2, '3': 3, '4': 4})
+        count_b = Counter({'1': 1, '2': 2, '3': 3, '4': 4, '5': 5})
+        count_empty = Counter({})
+        count_sub_a = count_a - count_b
+        count_sub_b = count_a - count_empty
+
+        self.assertEqual(count_sub_a, ({'1': 1}))
+        self.assertEqual(count_sub_b, count_a)
 
     def test_counter17_intersection_other(self):
-        self.skipTest("Not implemented!")
+        """
+        The intersection between two counter objects, i.e. minimum occurance of an item.
+        """
+        count_a = Counter({'1': 2, '2': 1, '3': 1, '4': 4})
+        count_b = Counter({'1': 1, '2': 2, '3': 3, '4': 4, '5': 5})
+        count_empty = Counter({})
+
+        self.assertEqual(count_a & count_b, ({'1': 1, '2': 1, '3': 1, '4': 4}))
+        self.assertEqual(count_a & count_empty, ({}))
 
     def test_counter18_union_other(self):
-        self.skipTest("Not implemented!")
+        """
+        The union between two counter objects, i.e. maxium occurance of an item.
+        """
+        count_a = Counter({'1': 2, '2': 1, '3': 1, '4': 4})
+        count_b = Counter({'1': 1, '2': 2, '3': 3, '4': 4, '5': 5})
+        count_empty = Counter({})
 
+        self.assertEqual(count_a | count_b, ({'1': 2, '2': 2, '3': 3, '4': 4, '5': 5}))
+        self.assertEqual(count_a | count_empty, ({'1': 2, '2': 1, '3': 1, '4': 4}))
 
 if __name__ == '__main__':
     unittest.main()
