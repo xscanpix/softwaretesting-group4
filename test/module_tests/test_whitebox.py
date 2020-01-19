@@ -32,7 +32,6 @@ class TestWhitebox(unittest.TestCase):
                 deque.appendleft(n-i)
         
         self.assertEqual(len(deque), n)
-        #deque.append(n+1)
 
         #path [1, 3, 7] gets visited here
         for i in range(n):
