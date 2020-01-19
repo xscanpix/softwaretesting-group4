@@ -3,23 +3,23 @@
 import unittest
 import sys
 
+#set local path here
 PATH = "" + "/test/module_tests"
 sys.path.append(PATH)
 
 import collections_python
 
 
- """ test_pop_whitebox
-  Whitebox testing of deque pop function
-
-  Purpose: 100% test coverage meaning we test all of the code within the method
-  we want to test all the paths possible going through the method
-  See project report for description of paths
-  """
 
 
 class TestWhitebox(unittest.TestCase):
+    """ test_pop_whitebox
+    Whitebox testing of deque pop function
 
+    Purpose: 100% test coverage meaning we test all of the code within the method
+    we want to test all the paths possible going through the method
+    See project report for description of paths
+    """
     def test_pop_whitebox(self):
         #path [1, 2]
         deque = collections_python.deque()
