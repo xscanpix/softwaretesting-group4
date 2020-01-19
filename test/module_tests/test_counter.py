@@ -177,6 +177,9 @@ class TestCounterBlackbox(unittest.TestCase):
         Elements are subtracted from an iterable or from another mapping (or counter).
         Like dict.update() but subtracts counts instead of replacing them.
         Both inputs and outputs may be zero or negative.
+
+        Purpose:
+            Test if elements are subtracted correctly and that elements are able to have a 0 or negative value.
         """
         count_a = Counter({'1': 1, '2': 0, '3': 3, '4': 4})
         count_b = Counter({'1': -2, '2': 2, '3': 3, '4': 4, '5': -5})
@@ -191,7 +194,9 @@ class TestCounterBlackbox(unittest.TestCase):
     def test_counter06_f_from_keys(self):
         """
         Counter.from_keys() is not implemented for Counter.
-        Should raise an NotImplementedError exception.
+
+        Purpose:
+            Should raise an NotImplementedError exception.
         """
         c = Counter()
         it = (1, 2, 3)
@@ -205,22 +210,28 @@ class TestCounterBlackbox(unittest.TestCase):
         Elements are counted from an iterable or added-in from another mapping (or counter).
         Like dict.update() but adds counts instead of replacing them.
         Also, the iterable is expected to be a sequence of elements, not a sequence of (key, value) pairs.
+
+        Purpose:
+            Test if counts are added correctly from the specified object class.
         """
-        # Iterable object
+        # Test and Iterable object
         a_count = Counter(["test1", "test2", "test3"])
         it = iter(("test1", "test2", "test3"))
         a_count.update(it)
+
         self.assertEqual(a_count, {"test1":2, "test2":2, "test3":2})
 
-        # Counter object
+        # Test Counter object
         b_count = Counter(["test1", "test2", "test3"])
         c_count = Counter(["test1", "test2", "test3"])
         d_count = ["test4"]
         b_count.update(c_count)
+
         self.assertEqual(b_count, {"test1":2, "test2":2, "test3":2})
 
-        # Including a new item
+        # Test including a new item
         b_count.update(d_count)
+
         self.assertEqual(b_count, {"test1":2, "test2":2, "test3":2, "test4":1})
 
 
@@ -228,19 +239,34 @@ class TestCounterBlackbox(unittest.TestCase):
         """
         Counter objects have a dictionary interface except that they return a
         zero count for missing items instead of raising a KeyError:
+
+        Purpose:
+            Verify that no KeyError is thrown when trying to access an non-existing element.
+
+            Verify that accessing a non-existing element returns a count of 0
         """
+
+        # Test that accesing a non-existant element returns 0
         c = Counter({'1': 0, '2': 2, '3': 3, '4': 4})
         self.assertEqual(c['5'], 0)
 
     def test_counter09_set_zero_and_delete(self):
         """
         Test setting an element to zero and deleting the element.
-        Setting a count to zero does not remove an element from a counter. Use del to remove it entirely:
+        Setting a count to zero does not remove an element from a counter. Use del to remove it entirely.
+
+        Purpose:
+            Verify that setting an element count to zero does not remove it.
+
+            Verify that using del correctly deletes the elements and its count.
         """
+
+        # Tests non-deletion when set to 0
         c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
         c['1'] = 0
         self.assertEqual(c, {'1': 0, '2': 2, '3': 3, '4': 4})
 
+        # Tests del
         del c['1']
         self.assertEqual(c, {'2': 2, '3': 3, '4': 4})
 
@@ -248,6 +274,9 @@ class TestCounterBlackbox(unittest.TestCase):
     def test_counter10_to_set(self):
         """
         Test converting a Counter object to a Set object.
+
+        Purpose:
+            Verify that a Counter object can be converted into a Set
         """
 
         c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
@@ -258,6 +287,9 @@ class TestCounterBlackbox(unittest.TestCase):
     def test_counter11_to_list(self):
         """
         Test converting a Counter object to a List object.
+
+        Purpose:
+            Verify that a Counter object can be converted into a List
         """
         c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
         list_c = list(c)
@@ -268,6 +300,9 @@ class TestCounterBlackbox(unittest.TestCase):
     def test_counter12_to_dict(self):
         """
         Test converting a Counter object to a Dict.
+
+        Purpose:
+            Verify that the object is a Dict and not Counter which is a subclass of dict.
         """
         c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
         dict_c = dict(c)
@@ -294,38 +329,48 @@ class TestCounterBlackbox(unittest.TestCase):
     def test_counter14_remove_zero_negative(self):
         """
         Removes keys that have zero or negative values after adding them.
+
+        Purpose:
+            Verify that addition works. It should also remove all elements with an occurance of 0 or less.
         """
         count_a = Counter({'1': 0, '2': 2, '3': 3, '4': 4})
-        count_b = Counter({'1': 1, '2': -4, '3': 3, '4': 4, '5': 5})
+        count_b = Counter({'1': 1, '2': -4, '3': -3, '4': 4, '5': 5})
         count_empty = Counter({})
 
         count_a += count_b
-        self.assertEqual(count_a, ({'1': 1, '3': 6, '4': 8, '5': 5}))
+        self.assertEqual(count_a, ({'1': 1, '4': 8, '5': 5}))
 
         # Adds count_b with a empty counter
         count_b += count_empty
-        self.assertEqual(count_b, ({'1': 1, '3': 3, '4': 4, '5': 5}))
+        self.assertEqual(count_b, ({'1': 1, '4': 4, '5': 5}))
 
     def test_counter15_addition_other(self):
         """
         Addition and subtraction combine counters by adding or subtracting the counts of corresponding elements.
+
+        Purpose:
+            Verify that addition works. It should also remove all elements with an occurance of 0 or less.
         """
         count_a = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
-        count_b = Counter({'1': 1, '2': 2, '3': 3, '4': 4, '5': 5})
+        count_b = Counter({'1': 1, '2': -2, '3': -4, '4': 4, '5': 5})
         count_empty = Counter({})
         count_add_a = count_a + count_b
         count_add_b = count_a + count_empty
 
-        self.assertEqual(count_add_a, ({'1': 2, '2': 4, '3': 6, '4': 8, '5': 5}))
+        self.assertEqual(count_add_a, ({'1': 2, '4': 8, '5': 5}))
         self.assertEqual(count_add_b, count_a)
 
     def test_counter16_subtract_other(self):
         """
         Addition and subtraction combine counters by adding or subtracting the counts of corresponding elements.
+
+        Purpose:
+            Verify that subtraction works. It should also remove all elements with an occurance of less than 0.
         """
         count_a = Counter({'1': 2, '2': 2, '3': 3, '4': 4})
         count_b = Counter({'1': 1, '2': 2, '3': 3, '4': 4, '5': 5})
         count_empty = Counter({})
+
         count_sub_a = count_a - count_b
         count_sub_b = count_a - count_empty
 
@@ -334,7 +379,10 @@ class TestCounterBlackbox(unittest.TestCase):
 
     def test_counter17_intersection_other(self):
         """
-        The intersection between two counter objects, i.e. minimum occurance of an item.
+        The intersection between two counter objects, i.e. minimum occurance of an element.
+
+        Purpose:
+            Verify that minimum occurance of an element is kept.
         """
         count_a = Counter({'1': 2, '2': 1, '3': 1, '4': 4})
         count_b = Counter({'1': 1, '2': 2, '3': 3, '4': 4, '5': 5})
@@ -345,7 +393,10 @@ class TestCounterBlackbox(unittest.TestCase):
 
     def test_counter18_union_other(self):
         """
-        The union between two counter objects, i.e. maxium occurance of an item.
+        The union between two counter objects, i.e. maxium occurance of an element.
+
+        Purpose:
+            Verify that maxium occurance of an element is kept.
         """
         count_a = Counter({'1': 2, '2': 1, '3': 1, '4': 4})
         count_b = Counter({'1': 1, '2': 2, '3': 3, '4': 4, '5': 5})
