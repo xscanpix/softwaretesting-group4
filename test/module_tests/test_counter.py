@@ -315,16 +315,20 @@ class TestCounterBlackbox(unittest.TestCase):
         self.assertFalse(isinstance(dict_c, Counter))
         self.assertTrue(isinstance(dict_c, dict))
 
-
     def test_counter13_items(self):
         """
         Test converting a Counter object to a list of (elem, cnt) pairs.
+
+        Purpose:
+            Verify that the Counter can be listed as a list of (elem, count) pairs
         """
-        c = Counter({'1': 1, '2': 2, '3': 3, '4': 4})
+        c = Counter({'1': 1, '2': 2, '3': 3})
+        tuple_list = [('1', 1), ('2', 2), ('3', 3)]
+        i = 0
 
-        self.skipTest("Not implemented!")
-
-
+        for key, value in c.items():
+            self.assertEqual((key, value), tuple_list[i])
+            i += 1
 
     def test_counter14_remove_zero_negative(self):
         """
